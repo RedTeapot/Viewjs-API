@@ -105,7 +105,7 @@ btnObj = View.find(containerObj, ".btn");
 
 **签名：**
 
-`View.findAll(rootObj?: HTMLElement, selector: string): NodeList`
+`View.findAll(rootObj?: HTMLElement, selector: string): NodeList | null`
 
 **可用版本：**`1.6.2+`
 
@@ -116,7 +116,7 @@ btnObj = View.find(containerObj, ".btn");
 
 **返回：**
 
-给定根元素下，匹配给定选择器的多个 DOM 元素。
+给定根元素下，匹配给定选择器的多个 DOM 元素。如果给定的 `rootObj` 为 `null` ，则返回 `null` 。
 
 ## static ofId\(\)
 
