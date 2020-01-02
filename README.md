@@ -1387,6 +1387,10 @@ view.setLayoutAction(function(){
 
 视图参数中匹配给定键名的参数取值。如果没有指定参数键名，则返回整个参数集合。如果视图跳转时没有指定视图参数，则返回 `null` 。
 
+{% hint style="warning" %}
+视图离开后，`getParameter()` 方法仍然可以获取到最后一次传入的参数。但重新进入时，再次调用将获取到新传入的参数。
+{% endhint %}
+
 ## seekParameter\(\)
 
 > 搜寻视图收到的参数。
