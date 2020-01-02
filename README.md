@@ -1391,6 +1391,48 @@ view.setLayoutAction(function(){
 视图离开后，`getParameter()` 方法仍然可以获取到最后一次传入的参数。但重新进入时，再次调用将获取到新传入的参数。
 {% endhint %}
 
+## setIfAutoSaveParamsToContext\(\)
+
+> 设置是否自动保存视图参数至视图上下文。如果赋值为 `true` ，则视图每次进入时，如果视图参数不为空且为一个有效对象，View.js 将自动使用名称形如：“\_autosavedparams\_qx4esdf74k” 的键将其存储至视图上下文中。
+
+**签名：**
+
+`viewInstance.setIfAutoSaveParamsToContext(autoSave?: boolean): View`
+
+**可用版本：**`1.6.3+`
+
+**入参：**
+
+* `autoSave?: boolean` - 是否自动保存，可选。默认为：`true` 。
+
+**返回：**
+
+视图实例本身，以供开发者链式调用 。
+
+{% hint style="info" %}
+视图参数在每次进入视图时均会被重置。通过自动保存至上下文，结合 `view.seekParameter()` 方法，开发者可以在没有收到入参时，继续使用最后一次收到的参数。
+
+自动保存动作，仅当视图参数是一个不为 `null` 的有效对象时才执行。一经保存，将覆盖既有取值。
+{% endhint %}
+
+## getIfAutoSaveParamsToContext\(\)
+
+> 判断该视图是否自动保存视图参数至视图上下文。
+
+**签名：**
+
+`viewInstance.getIfAutoSaveParamsToContext(): boolean`
+
+**可用版本：**`1.6.3+`
+
+**入参：**
+
+无。
+
+**返回：**
+
+`true` - 自动保存；`false` - 不自动保存。
+
 ## seekParameter\(\)
 
 > 搜寻视图收到的参数。
@@ -1407,14 +1449,17 @@ view.setLayoutAction(function(){
 
 **返回：**
 
-视图参数，或视图选项，或地址栏 queryString 中匹配给定键名的参数取值 。
+视图参数，或视图选项，或地址栏 queryString 中匹配给定键名的参数取值，或最后一次收到的、自动保存至视图上下文中的视图参数 。
 
 {% hint style="info" %}
 该方法如下方式工作：
 
 1. 尝试从 视图参数 中检索同名参数，有则返回，没有则执行步骤2；
 2. 尝试从 视图选项 中检索同名参数，有则返回，没有则执行步骤3；
-3. 尝试从 queryString 中 检索同名参数，有则返回对应的取值，没有则返回 `null`。
+3. 尝试从 queryString 中 检索同名参数，有则返回对应的取值，没有则执行步骤4；
+4. 尝试从 自动保存至视图上下文的视图参数 中检索同名参数，没有则返回 `null`。
+
+> 步骤 4 是 v1.6.3 新增的。
 {% endhint %}
 
 **调用举例：**
