@@ -29,4 +29,6 @@
 * [ViewInstanceLeaveEventData](lei-xing/viewinstanceleaveeventdata.md)
 * [ViewInitializer](lei-xing/viewinitializer.md)
 * [ViewInitializeTime](lei-xing/viewinitializetime.md)
+* [ViewSwitchInterceptor](lei-xing/viewswitchinterceptor.md)
+* [ViewDataFetchAction](lei-xing/viewdatafetchaction.md)
 

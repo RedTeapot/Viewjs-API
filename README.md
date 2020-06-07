@@ -442,9 +442,11 @@ var paramValue1 = options["param-name1"],
 
 `window.View` 以供开发者链式调用。
 
-## static passBy\(\)
+## ~~static passBy\(\)~~
 
 > “穿过”视图，用于在不渲染界面、不触发关联事件的情况下 “伪造” 视图的访问记录。
+>
+> 该方法自 `1.7.0` 开始被废弃（仍然可用），开发者可使用等价的 `View.navBy()` 替代。
 
 **签名：**
 
@@ -480,15 +482,97 @@ setTimeout(function(){
 }, 1000);
 ```
 
+## static navBy\(\)
+
+> 以 压入堆栈 的方式 “略过” 视图，用于在不渲染界面、不触发关联事件的情况下 “伪造” 视图的访问记录。
+
+**签名：**
+
+`View.navBy(viewId: string, viewNamespace?: string): View`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+* `viewId: string` - 视图ID。
+* `viewNamespace?: string` - 视图隶属的命名空间。可选，默认为：`default` 。
+
+**返回：**
+
+`window.View` 以供开发者链式调用。
+
+**调用举例：**
+
+```javascript
+/**
+ * 导航至 我的银行卡列表 界面。
+ *
+ * 通过伪造 profile 的访问记录，实现 “虽然用户看到的是 银行卡列表 界面，
+ * 但点击页面中的返回按钮，将返回到 个人中心 界面”的目的
+ */
+View.navBy("profile").navTo("my-bankcard-list");
+
+/**
+ * 1秒后页面将返回至 个人中心
+ */
+setTimeout(function(){
+    View.back();
+}, 1000);
+```
+
+## static changeBy\(\)
+
+> 以 替换栈顶 的方式 “略过” 视图，用于在不渲染界面、不触发关联事件的情况下 “伪造” 视图的访问记录。
+
+**签名：**
+
+`View.changeBy(viewId: string, viewNamespace?: string): View`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+* `viewId: string` - 视图ID。
+* `viewNamespace?: string` - 视图隶属的命名空间。可选，默认为：`default` 。
+
+**返回：**
+
+`window.View` 以供开发者链式调用。
+
+**调用举例：**
+
+```javascript
+/**
+ * 导航至 我的银行卡列表 界面。
+ *
+ * 通过伪造 my-wallet 的访问记录，实现 “虽然用户看到的是 银行卡列表 界面，
+ * 但点击页面中的返回按钮，将返回到 我的钱包 界面”的目的
+ */
+View.navTo("profile").changeBy("my-wallet").navTo("my-bankcard-list");
+
+/**
+ * 1秒后页面将返回至 我的钱包
+ */
+setTimeout(function(){
+    View.back();
+}, 1000);
+```
+
 ## static navTo\(\)
 
 > 以 压入堆栈 的方式跳转至目标视图。
 
-**签名：**
+**签名1：**
 
 `View.navTo(viewId: string, viewNamespace?: string, ctrl:` [`ViewSwitchCtrl`](lei-xing/viewswitchctrl.md)`): View`
 
 **可用版本：**`1.6.2+`
+
+**签名2：**
+
+`View.navTo(viewInstance: View): View`
+
+**可用版本：**`1.7.0+`
 
 **入参：**
 
@@ -574,6 +658,7 @@ setTimeout(function(){
 
 * `viewNamespace?: string` - 视图隶属的命名空间。可选，默认为：`default` 。
 * `ctrl?:` [`ViewSwitchCtrl`](lei-xing/viewswitchctrl.md) - 视图跳转控制。可选。
+* `viewInstance: View` - 视图实例。
 
 **返回：**
 
@@ -614,15 +699,25 @@ View.navTo("targetViewId", "myNamespace", {
 });
 ```
 
+{% hint style="info" %}
+自 `1.7.0` 开始，开发者可以通过 `View.addSwitchInterceptor()` 方法添加拦截器，阻止视图跳转动作的执行。
+{% endhint %}
+
 ## static changeTo\(\)
 
 > 以 替换栈顶 的方式跳转至目标视图。
 
-**签名：**
+**签名1：**
 
 `View.changeTo(viewId: string, viewNamespace?: string, ctrl:` [`ViewSwitchCtrl`](lei-xing/viewswitchctrl.md)`): View`
 
 **可用版本：**`1.6.2+`
+
+**签名2：**
+
+`View.changeTo(viewInstance: View): View`
+
+**可用版本：**`1.7.0+`
 
 **入参：**
 
@@ -685,10 +780,95 @@ View.navTo("targetViewId", "myNamespace", {
 
 * `viewNamespace?: string` - 视图隶属的命名空间。可选，默认为：`default` 。
 * `ctrl?:` [`ViewSwitchCtrl`](lei-xing/viewswitchctrl.md) - 视图跳转控制。可选。
+* `viewInstance: View` - 视图实例。
 
 **返回：**
 
 `window.View` 以供开发者链式调用。
+
+{% hint style="info" %}
+自 `1.7.0` 开始，开发者可以通过 `View.addSwitchInterceptor()` 方法添加拦截器，阻止视图跳转动作的执行。
+{% endhint %}
+
+## static **addSwitchInterceptor**\(\)
+
+> 添加视图跳转拦截器。
+
+**签名：**
+
+`View.addSwitchInterceptor(interceptor:` [`ViewSwitchInterceptor`](lei-xing/viewswitchinterceptor.md)`): View`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+* `interceptor: ViewSwitchInterceptor` - 拦截器。
+
+**返回：**
+
+`window.View` 以供开发者链式调用。
+
+**调用举例：**
+
+```javascript
+/**
+ * 添加拦截器：“修改密码” 页面要求登录
+ */
+View.addSwitchInterceptor(function(meta){
+    var targetViewId = meta.targetView.id;
+    /* 如果目标视图不是 “修改密码”，则放行 */
+    if("change-password" !== targetViewId)
+        return true;
+    
+    if(user.isLogined())
+        return true;
+    
+    toast("请登录");
+    //...
+    
+    return false;
+});
+
+/**
+ * 添加拦截器：“删除商品” 页面要求有权限
+ */
+View.addSwitchInterceptor(function(meta){
+    var targetViewId = meta.targetView.id;
+    /* 如果目标视图不是 “删除商品”，则放行 */
+    if("delete-goods" !== targetViewId)
+        return true;
+    
+    if(user.isAuthorized(targetViewId))
+        return true;
+    
+    toast("没有权限");
+    //...
+    
+    return false;
+});
+```
+
+{% hint style="info" %}
+拦截器将按添加顺序顺序执行。
+{% endhint %}
+
+## static get**SwitchInterceptors**\(\)
+
+> 获取添加的视图跳转拦截器列表。顺序与添加顺序保持一致。
+
+**签名：**
+
+`View.getSwitchInterceptors():` [`ViewSwitchInterceptor`](lei-xing/viewswitchinterceptor.md)`[]`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+无。
+
+**返回：**
+
+与添加顺序保持一致的视图跳转拦截器列表。
 
 ## static setNoViewToNavBackAction\(\)
 
@@ -854,7 +1034,7 @@ View.setNoViewToNavBackAction(function(){
 所有处理器均以 同步 的方式被触发。
 {% endhint %}
 
-## static setInitializer\(\)
+## ~~static setInitializer\(\)~~
 
 > 设置 View.js 的初始化触发器。
 
@@ -868,6 +1048,28 @@ View.setNoViewToNavBackAction(function(){
 
 * `initializer:` [`ViewInitializer`](lei-xing/viewinitializer.md) - 初始化触发器。
 * `execTime?:` [`ViewInitializeTime`](lei-xing/viewinitializetime.md) - 触发器的执行时机。默认为：`'domready'` 。
+
+**返回：**
+
+`window.View` 以供开发者链式调用。
+
+{% hint style="warning" %}
+自 `1.7.0` 开始，本方法被标记为 “已废弃” （仍然可用），建议开发者使用新增的 `View.init()` 方法实现手动初始化 。
+{% endhint %}
+
+## static init\(\)
+
+> 初始化 View.js 。
+
+**签名：**
+
+`View.init(): View`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+无。
 
 **返回：**
 
@@ -1232,7 +1434,7 @@ View.fire("myEvent", {
 
 视图在 DOM 骨架上声明的名称。
 
-## getGroupName\(\)
+## ~~getGroupName\(\)~~
 
 > 获取视图隶属的群组名称。视图群组名称，通过在视图的 DOM 骨架元素上声明 `data-view-group` 属性完成声明。  
 > 该方法，以及 `data-view-group` 属性已废弃，请使用 `getName()` 方法和 `data-view-name` 属性。
@@ -1412,6 +1614,10 @@ view.setLayoutAction(function(){
 {% hint style="info" %}
 视图参数在每次进入视图时均会被重置。通过自动保存至上下文，结合 `view.seekParameter()` 方法，开发者可以在没有收到入参时，继续使用最后一次收到的参数。
 
+从 `1.7.0` 版本开始，开发者也可以在调用 `view.seekParmeter()` 方法时，指定 “不存上下文中检索” 。
+{% endhint %}
+
+{% hint style="warning" %}
 自动保存动作，仅当视图参数是一个不为 `null` 的有效对象时才执行。一经保存，将覆盖既有取值。
 {% endhint %}
 
@@ -1433,19 +1639,74 @@ view.setLayoutAction(function(){
 
 `true` - 自动保存；`false` - 不自动保存。
 
+## setDataFetchAction\(\)
+
+> 设置视图渲染所需要的数据的获取方法。该方法用于辅助实现视图进入时的完整性体验。
+
+**签名：**
+
+`viewInstance.setDataFetchAction(action:` [`ViewDataFetchAction`](lei-xing/viewdatafetchaction.md)`): View`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+无。
+
+**返回：**
+
+视图实例本身，以供开发者链式调用 。
+
+## getDataFetchAction\(\)
+
+> 获取设置的视图渲染所需要的数据的获取方法。
+
+**签名：**
+
+`viewInstance.getDataFetchAction():` [`ViewDataFetchAction`](lei-xing/viewdatafetchaction.md)\`\`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+无。
+
+**返回：**
+
+设置的视图渲染所需要的数据的获取方法。如果开发者没有设置，则返回 `null` 。
+
+## fetchData\(\)
+
+> 获取视图渲染所需要的数据。
+
+**签名：**
+
+`viewInstance.fetchData(): Promise | Thenable`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+无。
+
+**返回：**
+
+`Promise` 实例（浏览器支持 `Promise`）; `Thenable` - 包含有 then 方法的对象（浏览器不支持 `Promise`）
+
 ## seekParameter\(\)
 
 > 搜寻视图收到的参数。
 
 **签名：**
 
-`viewInstance.seekParameter(paramName: string): any | null`
+`viewInstance.seekParameter(paramName: string, ifRetrieveFromContext?: boolean): any | null`
 
 **可用版本：**`1.6.2+`
 
 **入参：**
 
 * `paramName: string` - 参数的键名。
+* `ifRetrieveFromContext?: boolean` - 是否从上下文中检索参数（仅当自动保存视图参数至视图上下文时有效），可选。默认为：`true` 。 该参数是 `1.7.0` 新增的。
 
 **返回：**
 
@@ -1457,9 +1718,9 @@ view.setLayoutAction(function(){
 1. 尝试从 视图参数 中检索同名参数，有则返回，没有则执行步骤2；
 2. 尝试从 视图选项 中检索同名参数，有则返回，没有则执行步骤3；
 3. 尝试从 queryString 中 检索同名参数，有则返回对应的取值，没有则执行步骤4；
-4. 尝试从 自动保存至视图上下文的视图参数 中检索同名参数，没有则返回 `null`。
+4. 如果 `ifRetrieveFromContext` 为 `true`，尝试从 自动保存至视图上下文的视图参数 中检索同名参数，没有则返回 `null`。
 
-> 步骤 4 是 v1.6.3 新增的。
+> 步骤 4 是 `1.6.3` 新增的。
 {% endhint %}
 
 **调用举例：**
@@ -1820,4 +2081,101 @@ view.fire("myEvent", {
 // -> 'value1'
 console.log(view.getLatestEventData("myEvent").key1);
 ```
+
+## addTimer\(\)
+
+> 添加视图活动时，需要周期性执行的定时器。
+
+**签名：**
+
+`viewInstance.addTimer(timerName: string, timerHandle: Function, interval: Number): View`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+* `timerName: string` - 定时器名称，不区分大小写。
+* `timerHandle: Function` - 定时器处理句柄。
+* `interval: Number` - 定时器周期性执行间隔。单位：毫秒。
+
+**返回：**
+
+视图本身，以供开发者链式调用。
+
+{% hint style="info" %}
+通过该方法创建的定时器，将在视图进入时自动开始执行，在视图离开时，自动停止。  
+执行该方法时，视图处于活动状态，则定时器立即开始执行。
+{% endhint %}
+
+## startTimer\(\)
+
+> 启动视图定时器。
+
+**签名：**
+
+`viewInstance.startTimer(timerName: string): boolean`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+* `timerName: string` - 定时器名称，不区分大小写。
+
+**返回：**
+
+`true` - 定时器启动成功；`false` - 定时器启动失败（定时器不存在，或已经启动）。
+
+## startAllTimers\(\)
+
+> 启动视图内的所有定时器。
+
+**签名：**
+
+`viewInstance.startAllTimers(): View`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+无。
+
+**返回：**
+
+视图本身，以供开发者链式调用。
+
+## stopTimer\(\)
+
+> 停止视图定时器。
+
+**签名：**
+
+`viewInstance.stopTimer(timerName: string): boolean`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+* `timerName: string` - 定时器名称，不区分大小写。
+
+**返回：**
+
+`true` - 定时器停止成功；`false` - 定时器停止失败（定时器不存在，或尚未启动）。
+
+## stopAllTimers\(\)
+
+> 停止视图内的所有定时器。
+
+**签名：**
+
+`viewInstance.stopAllTimers(): View`
+
+**可用版本：**`1.7.0+`
+
+**入参：**
+
+无。
+
+**返回：**
+
+视图本身，以供开发者链式调用。
 
